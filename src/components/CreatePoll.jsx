@@ -17,12 +17,14 @@ import {
   Close,
 } from "@material-ui/icons";
 import _ from "lodash";
+import axios from "axios";
 
 const CreatePoll = () => {
   const [open, setOpen] = React.useState(false);
   const [count, setCount] = React.useState(1);
   const [name, setName] = React.useState("");
   const [question, setQuestion] = React.useState("");
+  const [options, setOptions] = React.useState([]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -36,9 +38,40 @@ const CreatePoll = () => {
     setCount(count + 1);
   };
 
-  const deleteCount = () => {
+  const deleteCount = (index) => {
+    let tempArr = [...options];
+    tempArr.splice(index, 1);
+    setOptions(tempArr);
     setCount(count - 1);
   };
+
+  const validateInput = () => {
+    let tempArr = [...options];
+    if(options.length === 0 || question === "" || name === "") return false;
+    return true;
+  };
+
+  const submitPoll = () => {
+    if (!validateInput()) {
+      alert("Enter all values!");
+      return;
+    } else {
+      let tempArr = [...options];
+      tempArr.forEach((element, index) => {
+        element["id"] = index + 1;
+      });
+
+      axios
+        .post("http://localhost:5000/api/polls/create-poll", {
+          pollName: name,
+          question,
+          options: tempArr,
+        })
+        .then((res) => console.log(res.data))
+        .catch((e) => console.log(e));
+    }
+  };
+
   return (
     <Grid container justify="center" style={{ marginTop: "2em" }}>
       <Grid item>
@@ -63,6 +96,7 @@ const CreatePoll = () => {
                   variant="standard"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  required
                 />
               </Grid>
               <Grid item lg={10} xs={11}>
@@ -76,30 +110,10 @@ const CreatePoll = () => {
                   variant="standard"
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
+                  required
                 />
               </Grid>
-              <Grid container lg={8}>
-                <Grid item>
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    id="option"
-                    label="Option 1"
-                    type="text"
-                    fullWidth
-                    variant="standard"
-                  />
-                </Grid>
-                <Grid item>
-                  <IconButton
-                    style={{ marginTop: "0.25em" }}
-                    onClick={addCount}
-                  >
-                    <AddCircle color="primary" />
-                  </IconButton>
-                </Grid>
-              </Grid>
-              {_.times(count - 1, (index) => {
+              {_.times(count, (index) => {
                 return (
                   <Grid container lg={8}>
                     <Grid item>
@@ -107,10 +121,16 @@ const CreatePoll = () => {
                         autoFocus
                         margin="dense"
                         id="option"
-                        label={`Option ${index + 2}`}
+                        label={`Option ${index + 1}`}
                         type="text"
                         fullWidth
                         variant="standard"
+                        value={options[index] ? options[index].title : ""}
+                        onChange={(e) => {
+                          let tempArr = [...options];
+                          tempArr[index] = { title: e.target.value, votes: 0 };
+                          setOptions(tempArr);
+                        }}
                       />
                     </Grid>
                     <Grid item>
@@ -121,14 +141,16 @@ const CreatePoll = () => {
                         <AddCircle color="primary" />
                       </IconButton>
                     </Grid>
-                    <Grid item>
-                      <IconButton
-                        style={{ marginTop: "0.25em" }}
-                        onClick={deleteCount}
-                      >
-                        <IndeterminateCheckBox color="secondary" />
-                      </IconButton>
-                    </Grid>
+                    {index !== 0 && (
+                      <Grid item>
+                        <IconButton
+                          style={{ marginTop: "0.25em" }}
+                          onClick={() => deleteCount(index)}
+                        >
+                          <IndeterminateCheckBox color="secondary" />
+                        </IconButton>
+                      </Grid>
+                    )}
                   </Grid>
                 );
               })}
@@ -142,7 +164,12 @@ const CreatePoll = () => {
             >
               Cancel
             </Button>
-            <Button onClick={handleClose} color="primary" endIcon={<Create />}>
+            <Button
+              onClick={handleClose}
+              color="primary"
+              endIcon={<Create />}
+              onClick={submitPoll}
+            >
               Create
             </Button>
           </DialogActions>
