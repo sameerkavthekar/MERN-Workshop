@@ -71,7 +71,7 @@ const CreatePoll = () => {
           options: tempArr,
         })
         .then((res) => {
-          handleClose();
+          window.location.reload();
         })
         .catch((e) => console.log(e));
     }
