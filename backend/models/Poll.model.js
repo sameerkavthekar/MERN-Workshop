@@ -3,10 +3,6 @@ const Schema = mongoose.Schema;
 
 const PollSchema = new Schema(
   {
-    questionNumber: {
-      type: Number,
-      required: true,
-    },
     pollName: {
       type: String,
       required: true,
@@ -15,7 +11,7 @@ const PollSchema = new Schema(
       type: String,
       required: true,
     },
-    answers: {
+    options: {
       type: Array,
       default: [],
     },
