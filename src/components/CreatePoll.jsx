@@ -32,6 +32,10 @@ const CreatePoll = () => {
 
   const handleClose = () => {
     setOpen(false);
+    setCount(1);
+    setName("");
+    setQuestion("");
+    setOptions([]);
   };
 
   const addCount = () => {
@@ -46,8 +50,7 @@ const CreatePoll = () => {
   };
 
   const validateInput = () => {
-    let tempArr = [...options];
-    if(options.length === 0 || question === "" || name === "") return false;
+    if (options.length === 0 || question === "" || name === "") return false;
     return true;
   };
 
@@ -67,7 +70,10 @@ const CreatePoll = () => {
           question,
           options: tempArr,
         })
-        .then((res) => console.log(res.data))
+        .then((res) => {
+          console.log(res.data);
+          handleClose();
+        })
         .catch((e) => console.log(e));
     }
   };
