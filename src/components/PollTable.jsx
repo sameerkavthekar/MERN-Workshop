@@ -3,14 +3,16 @@ import MUIDataTable from "mui-datatables";
 import { Grid, IconButton, CircularProgress } from "@material-ui/core";
 import { Poll, HowToVote } from "@material-ui/icons";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
 
 const PollTable = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  let history = useHistory();
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/polls/get-poll")
+      .get("http://localhost:5000/api/polls/get-polls")
       .then((res) => {
         setData(res.data.polls);
         setLoading(false);
@@ -27,7 +29,9 @@ const PollTable = () => {
       options: {
         customBodyRenderLite: (dataIndex) => {
           return (
-            <IconButton>
+            <IconButton
+              onClick={() => history.push(`/poll/?id=${data[dataIndex]._id}`)}
+            >
               <HowToVote color="primary" />
             </IconButton>
           );
@@ -40,7 +44,11 @@ const PollTable = () => {
       options: {
         customBodyRenderLite: (dataIndex) => {
           return (
-            <IconButton>
+            <IconButton
+              onClick={() =>
+                history.push(`/results/?id=${data[dataIndex]._id}`)
+              }
+            >
               <Poll color="secondary" />
             </IconButton>
           );
@@ -61,7 +69,9 @@ const PollTable = () => {
   return (
     <>
       {loading ? (
-        <CircularProgress />
+        <center style={{ marginTop: "5em" }}>
+          <CircularProgress />
+        </center>
       ) : (
         <div>
           <Grid container justify="center">

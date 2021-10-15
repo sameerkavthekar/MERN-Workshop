@@ -71,7 +71,6 @@ const CreatePoll = () => {
           options: tempArr,
         })
         .then((res) => {
-          console.log(res.data);
           handleClose();
         })
         .catch((e) => console.log(e));
@@ -170,12 +169,7 @@ const CreatePoll = () => {
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleClose}
-              color="primary"
-              endIcon={<Create />}
-              onClick={submitPoll}
-            >
+            <Button color="primary" endIcon={<Create />} onClick={submitPoll}>
               Create
             </Button>
           </DialogActions>

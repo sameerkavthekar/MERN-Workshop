@@ -17,15 +17,18 @@ const Results = () => {
   const [votes, setVotes] = useState([]);
   const [question, setQuestion] = useState("");
   useEffect(() => {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+
     axios
-      .get("http://localhost:5000/api/polls/get-poll/6169342634c59c95b3e2b011")
+      .get(`http://localhost:5000/api/polls/get-poll/${params.id}`)
       .then((res) => {
         let temp_labels = [];
         let temp_votes = [];
-        res.data.polls.options.map((ele) => {
+        res.data.polls.options.forEach((ele) => {
           temp_labels.push(ele.title);
         });
-        res.data.polls.options.map((ele) => {
+        res.data.polls.options.forEach((ele) => {
           temp_votes.push(ele.votes);
         });
         setLabels(temp_labels);
@@ -72,7 +75,9 @@ const Results = () => {
     <>
       <Navbar />
       {loading ? (
-        <CircularProgress />
+        <center style={{ marginTop: "5em" }}>
+          <CircularProgress />
+        </center>
       ) : (
         <>
           <Typography variant="overline" style={{ fontSize: "1.5em" }}>

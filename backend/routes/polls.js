@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const Poll = require("../models/Poll.model");
 
-router.get("/get-poll", async (req, res) => {
+router.get("/get-polls", async (req, res) => {
   try {
     let polls = await Poll.find();
 
@@ -57,6 +57,20 @@ router.post("/cast-vote", async (req, res) => {
       .catch((err) => res.status(400).send("Error: " + err));
   } catch (e) {
     console.log(e);
+  }
+});
+
+router.get("/get-poll/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    let polls = await Poll.findById(id);
+    if (polls) {
+      return res.status(200).send({ polls });
+    } else {
+      return res.status(400).send({ err: "Incorrect ID" });
+    }
+  } catch (err) {
+    return res.status(400).send({ err });
   }
 });
 
