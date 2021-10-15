@@ -7,4 +7,7 @@ app.use(express.urlencoded({ limit: "50mb" }));
 
 connectDB();
 
+app.use("/api/users", require("./routes/users"));
+app.use("/api/polls", require("./routes/polls"));
+
 app.listen(5000, () => console.log("Listening on 5000!"));
