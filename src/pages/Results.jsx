@@ -7,7 +7,10 @@ import {
   makeStyles,
   CircularProgress,
   Typography,
+  Button,
 } from "@material-ui/core";
+import { ArrowBackIos } from "@material-ui/icons";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 
@@ -80,7 +83,7 @@ const Results = () => {
         </center>
       ) : (
         <>
-          <Typography variant="overline" style={{ fontSize: "1.5em" }}>
+          <Typography style={{ fontSize: "1.5em", marginTop: "1em" }}>
             <center>{question}</center>
           </Typography>
           <Grid container justify="center" style={{ marginTop: "2em" }}>
@@ -99,6 +102,18 @@ const Results = () => {
                 </CardContent>
               </Card>
             </Grid>
+          </Grid>
+          <Grid container justify="center">
+            <Link to="/" style={{ color: "white", textDecoration: "none" }}>
+              <Button
+                color="secondary"
+                variant="contained"
+                style={{ marginTop: "1.5em" }}
+                startIcon={<ArrowBackIos />}
+              >
+                Go Back
+              </Button>
+            </Link>
           </Grid>
         </>
       )}

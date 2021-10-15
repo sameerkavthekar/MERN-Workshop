@@ -3,20 +3,38 @@ import {
   Card,
   Grid,
   CardContent,
-  CardActions,
   Button,
   RadioGroup,
   FormControlLabel,
   Radio,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@material-ui/core";
 import axios from "axios";
+import { ArrowBackIos, Send } from "@material-ui/icons";
+import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const CastPoll = () => {
   const [pollID, setPollID] = useState();
   const [pollData, setPollData] = useState();
   const [loading, setLoading] = useState(true);
   const [option, setOption] = useState(null);
+  const [open, setOpen] = React.useState(false);
+  const history = useHistory();
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    history.push("/");
+  };
 
   useEffect(() => {
     (async () => {
@@ -39,7 +57,7 @@ const CastPoll = () => {
         pollId: pollID,
         optionId: option,
       })
-      .then((res) => console.log(res.data));
+      .then((res) => handleClickOpen());
   };
 
   return (
@@ -49,41 +67,82 @@ const CastPoll = () => {
           <CircularProgress />
         </center>
       ) : (
-        <Grid container justify="center" style={{ marginTop: "2em" }}>
-          <Grid item>
-            <Card style={{ minWidth: 350 }} variant="outlined">
-              <CardContent>
-                <div style={{ fontSize: 30 }}>{pollData.pollName}</div>
-                <div style={{ fontSize: 18 }}>
-                  <p>Question: {pollData.question}</p>
-                  Options:
-                  <br />
-                </div>
-                <RadioGroup aria-label="options" name="radio-buttons-group">
-                  {pollData.options.map((element, index) => (
-                    <FormControlLabel
-                      value={"" + element.id}
-                      control={<Radio />}
-                      label={element.title}
-                      onChange={(e) => setOption(e.target.value)}
-                      key={index}
-                    />
-                  ))}
-                </RadioGroup>
-              </CardContent>
-              <CardActions>
-                <Button
-                  color="primary"
-                  disabled={option === null}
-                  variant="outlined"
-                  onClick={submitPoll}
-                >
-                  Submit
-                </Button>
-              </CardActions>
-            </Card>
+        <>
+          <Grid container justify="center" style={{ marginTop: "2em" }}>
+            <Grid item>
+              <Card style={{ minWidth: 350 }} variant="outlined">
+                <CardContent>
+                  <div style={{ fontSize: 30 }}>
+                    <center>{pollData.pollName}</center>
+                  </div>
+                  <div style={{ fontSize: 18 }}>
+                    <p>
+                      <center>Question: {pollData.question}</center>
+                    </p>
+                  </div>
+                  <RadioGroup aria-label="options" name="radio-buttons-group">
+                    {pollData.options.map((element, index) => (
+                      <center>
+                        <FormControlLabel
+                          value={"" + element.id}
+                          control={<Radio />}
+                          label={element.title}
+                          onChange={(e) => setOption(e.target.value)}
+                          key={index}
+                        />
+                      </center>
+                    ))}
+                  </RadioGroup>
+                </CardContent>
+
+                <center>
+                  <Button
+                    color="primary"
+                    disabled={option === null}
+                    variant="contained"
+                    onClick={submitPoll}
+                    style={{ margin: "1em" }}
+                    startIcon={<Send />}
+                  >
+                    Submit
+                  </Button>
+                </center>
+              </Card>
+            </Grid>
           </Grid>
-        </Grid>
+          <Dialog open={open} onClose={handleClose}>
+            <DialogTitle style={{ color: "#6b969b" }}>
+              {"Vote Success"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Congratulations! You have successfully cast your vote!
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                color="secondary"
+                variant="outlined"
+                onClick={handleClose}
+                autoFocus
+              >
+                OK
+              </Button>
+            </DialogActions>
+          </Dialog>
+          <Grid container justify="center">
+            <Link to="/" style={{ color: "white", textDecoration: "none" }}>
+              <Button
+                color="secondary"
+                variant="contained"
+                style={{ marginTop: "1.5em" }}
+                startIcon={<ArrowBackIos />}
+              >
+                Go Back
+              </Button>
+            </Link>
+          </Grid>
+        </>
       )}
     </>
   );
